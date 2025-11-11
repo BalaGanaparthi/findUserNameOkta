@@ -128,6 +128,7 @@ func init() {
 	mux.Handle("/api/get-user-and-factors", csrfMiddleware(http.HandlerFunc(handleGetUserAndFactors)))
 	mux.Handle("/api/challenge-factor", csrfMiddleware(http.HandlerFunc(handleChallengeFactor)))
 	mux.Handle("/api/verify-factor", csrfMiddleware(http.HandlerFunc(handleVerifyFactor)))
+	mux.Handle("/api/redirect-to-okta", csrfMiddleware(http.HandlerFunc(redirectToOktaSignPage)))
 
 	// --- Create the adapter ---
 	// This adapter converts Lambda events into standard Go http.Requests
@@ -446,6 +447,26 @@ func handleVerifyFactor(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(VerifyResponse{Username: user.Profile.Login})
+}
+
+func redirectToOktaSignPage(w http.ResponseWriter, r *http.Request) {
+
+	// Invalidate the session cookie
+	http.SetCookie(w, &http.Cookie{
+		Name:     sessionCookieName,
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1, // Delete cookie
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	// Redirect to Okta sign-in page
+	redirectURL := fmt.Sprintf("https://%s", oktaDomain)
+	http.Redirect(w, r, redirectURL, http.StatusFound)
+	return
+
 }
 
 // --- Security Middleware ---
