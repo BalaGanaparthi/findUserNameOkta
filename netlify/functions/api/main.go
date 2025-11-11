@@ -128,7 +128,7 @@ func init() {
 	mux.Handle("/api/get-user-and-factors", csrfMiddleware(http.HandlerFunc(handleGetUserAndFactors)))
 	mux.Handle("/api/challenge-factor", csrfMiddleware(http.HandlerFunc(handleChallengeFactor)))
 	mux.Handle("/api/verify-factor", csrfMiddleware(http.HandlerFunc(handleVerifyFactor)))
-	mux.Handle("/api/redirect-to-okta", csrfMiddleware(http.HandlerFunc(redirectToOktaSignPage)))
+	mux.Handle("/api/redirect", csrfMiddleware(http.HandlerFunc(redirectToOktaSignPage)))
 
 	// --- Create the adapter ---
 	// This adapter converts Lambda events into standard Go http.Requests
