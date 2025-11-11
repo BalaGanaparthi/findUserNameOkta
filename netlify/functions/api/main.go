@@ -463,7 +463,8 @@ func redirectToOktaSignPage(w http.ResponseWriter, r *http.Request) {
 	})
 
 	// Redirect to Okta sign-in page
-	redirectURL := fmt.Sprintf("https://%s", oktaDomain)
+	redirectURL := fmt.Sprintf("https://%s/app/UserHome", oktaDomain)
+	w.Header().Set("Content-Type", "application/json")
 	http.Redirect(w, r, redirectURL, http.StatusFound)
 
 }
