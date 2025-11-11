@@ -472,6 +472,25 @@ func redirectToOktaSignPage(w http.ResponseWriter, r *http.Request) {
 // --- Security Middleware ---
 func csrfMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		// --- THIS IS THE KEY ---
+		// You must allow the specific origin
+		w.Header().Set("Access-Control-Allow-Origin", "https://findusername-ok.netlify.app")
+
+		// --- AND THIS IS THE FIX ---
+		// Tell the browser it's OK to send cookies
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		// --- OTHER COMMON HEADERS ---
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-CSRF-Token") // Make sure to allow your CSRF header!
+
+		// Handle preflight requests
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
 		cookie, err := r.Cookie(csrfCookieName)
 		if err != nil {
 			httpError(w, "CSRF cookie not found", http.StatusForbidden)
