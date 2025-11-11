@@ -28,7 +28,7 @@
       <!-- Main Application Container -->
       <div id="app-container">
         <!-- View 1: Initial Button -->
-        <div id="view-initial" class="hidden">
+        <div id="view-initial">
           <h2 class="text-2xl font-bold text-center text-gray-900 mb-4">
             Account Recovery
           </h2>
@@ -44,8 +44,7 @@
         </div>
 
         <!-- View 2: Email Entry -->
-        <!-- <div id="view-initial"> -->
-        <div id="view-email">
+        <div id="view-email" class="hidden">
           <h2 class="text-2xl font-bold text-center text-gray-900 mb-4">
             Enter Your Email
           </h2>
@@ -75,7 +74,6 @@
             </div>
           </form>
         </div>
-        <!-- </div> -->
 
         <!-- View 3: Factor Selection -->
         <div id="view-factors" class="hidden">
@@ -149,19 +147,12 @@
             id="username-display"
             class="text-2xl font-mono font-bold text-indigo-700 mt-2"
           ></p>
-          <div>
-            <form id="form-redirectToOkta">
-              <div>
-                <button
-                  id="btn-restart-x"
-                  type="submit"
-                  class="mt-8 w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  Go to Okta
-                </button>
-              </div>
-            </form>
-          </div>
+          <button
+            id="btn-restart"
+            class="mt-8 w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Start Over
+          </button>
         </div>
 
         <!-- Loading Indicator -->
@@ -205,7 +196,6 @@
       const formEmail = document.getElementById("form-email");
       const formFactors = document.getElementById("form-factors");
       const formChallenge = document.getElementById("form-challenge");
-      const redirectToOkta = document.getElementById("form-redirectToOkta");
 
       const factorList = document.getElementById("factor-list");
       const challengePrompt = document.getElementById("challenge-prompt");
@@ -469,23 +459,6 @@
           selectedFactorId = null;
           emailInput.value = "";
           passcodeInpit.value = "";
-        } catch (error) {
-          showError(error.message);
-          showView("challenge");
-        }
-      });
-
-      /**
-       * Handle Redirect to Okta (Step 6)
-       */
-      redirectToOkta.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        showLoading();
-
-        try {
-          const result = await apiFetch("/api/redirect-to-okta", {
-            method: "GET",
-          });
         } catch (error) {
           showError(error.message);
           showView("challenge");
