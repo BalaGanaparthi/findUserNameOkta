@@ -480,16 +480,15 @@
         e.preventDefault();
         showLoading();
 
-        // try {
-        //   const result = await apiFetch("/api/redirect", {
-        //     method: "GET",
-        //   });
-        // } catch (error) {
-        //   showError(error.message);
-        //   showView("challenge");
-        // }
-
-        window.location.href = "/api/redirect";
+        try {
+          const result = await apiFetch("/api/redirect", {
+            method: "POST",
+            credentials: "include",
+          });
+        } catch (error) {
+          showError(error.message);
+          showView("challenge");
+        }
       });
 
       // --- App Initialization ---
