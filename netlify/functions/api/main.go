@@ -193,7 +193,7 @@ func getUserIdByEmail(email string) (string, error) {
 	if resp.StatusCode != http.StatusOK {
 		bodyBytes, _ := io.ReadAll(resp.Body)
 		log.Printf("Okta API Error Body: %s", string(bodyBytes))
-		return "", fmt.Errorf("Okta API returned status %d", resp.StatusCode)
+		return "", fmt.Errorf("okta API returned status %d", resp.StatusCode)
 	}
 
 	var users []OktaUser
@@ -219,7 +219,7 @@ func getUserFactors(userId string) ([]FactorResponse, error) {
 	if resp.StatusCode != http.StatusOK {
 		bodyBytes, _ := io.ReadAll(resp.Body)
 		log.Printf("Okta API Error Body: %s", string(bodyBytes))
-		return nil, fmt.Errorf("Okta API returned status %d", resp.StatusCode)
+		return nil, fmt.Errorf("okta API returned status %d", resp.StatusCode)
 	}
 
 	var factors []OktaFactor
@@ -258,7 +258,7 @@ func challengeFactor(userId, factorId string) error {
 	if resp.StatusCode != http.StatusOK {
 		bodyBytes, _ := io.ReadAll(resp.Body)
 		log.Printf("Okta API Error Body: %s", string(bodyBytes))
-		return fmt.Errorf("Okta API returned status %d while challenging", resp.StatusCode)
+		return fmt.Errorf("okta API returned status %d while challenging", resp.StatusCode)
 	}
 	return nil
 }
@@ -302,7 +302,7 @@ func getOktaUser(userId string) (*OktaUser, error) {
 	if resp.StatusCode != http.StatusOK {
 		bodyBytes, _ := io.ReadAll(resp.Body)
 		log.Printf("Okta API Error Body: %s", string(bodyBytes))
-		return nil, fmt.Errorf("Okta API returned status %d", resp.StatusCode)
+		return nil, fmt.Errorf("okta API returned status %d", resp.StatusCode)
 	}
 
 	var user OktaUser
@@ -465,7 +465,6 @@ func redirectToOktaSignPage(w http.ResponseWriter, r *http.Request) {
 	// Redirect to Okta sign-in page
 	redirectURL := fmt.Sprintf("https://%s", oktaDomain)
 	http.Redirect(w, r, redirectURL, http.StatusFound)
-	return
 
 }
 
