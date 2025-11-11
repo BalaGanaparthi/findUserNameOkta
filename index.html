@@ -198,7 +198,7 @@
       const errorMessage = document.getElementById("error-message");
 
       const btnStart = document.getElementById("btn-start");
-      const btnRestart = document.getElementById("btn-restart");
+      // const btnRestart = document.getElementById("btn-restart");
 
       const formEmail = document.getElementById("form-email");
       const formFactors = document.getElementById("form-factors");
@@ -346,10 +346,10 @@
         showView("email");
       });
 
-      btnRestart.addEventListener("click", () => {
-        // Re-initialize CSRF tokens for a new flow
-        initApp();
-      });
+      // btnRestart.addEventListener("click", () => {
+      //   // Re-initialize CSRF tokens for a new flow
+      //   initApp();
+      // });
 
       /**
        * Handle Email Submission (Step 1 & 2)
