@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Recovery</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Simple loading spinner */
+      .spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-left-color: #4f46e5;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body class="h-full flex items-center justify-center font-sans">
+    <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+      <!-- Main Application Container -->
+      <div id="app-container">
+        <!-- View 1: Initial Button -->
+        <div id="view-initial">
+          <h2 class="text-2xl font-bold text-center text-gray-900 mb-4">
+            Account Recovery
+          </h2>
+          <p class="text-center text-gray-600 mb-6">
+            Forgot your account details?
+          </p>
+          <button
+            id="btn-start"
+            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Find My Username
+          </button>
+        </div>
+
+        <!-- View 2: Email Entry -->
+        <div id="view-email" class="hidden">
+          <h2 class="text-2xl font-bold text-center text-gray-900 mb-4">
+            Enter Your Email
+          </h2>
+          <form id="form-email">
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700"
+                >Email address</label
+              >
+              <div class="mt-1">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  required
+                  class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                />
+              </div>
+            </div>
+            <div class="mt-6">
+              <button
+                type="submit"
+                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Next
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- View 3: Factor Selection -->
+        <div id="view-factors" class="hidden">
+          <h2 class="text-2xl font-bold text-center text-gray-900 mb-4">
+            Select Verification Method
+          </h2>
+          <form id="form-factors">
+            <fieldset>
+              <legend class="sr-only">Verification Method</legend>
+              <div id="factor-list" class="space-y-4">
+                <!-- Factors will be injected here by JS -->
+              </div>
+            </fieldset>
+            <div class="mt-6">
+              <button
+                type="submit"
+                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Send Code
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- View 4: Challenge Verification -->
+        <div id="view-challenge" class="hidden">
+          <h2 class="text-2xl font-bold text-center text-gray-900 mb-4">
+            Enter Code
+          </h2>
+          <p id="challenge-prompt" class="text-center text-gray-600 mb-6">
+            A code was sent to your device.
+          </p>
+          <form id="form-challenge">
+            <div>
+              <label
+                for="passcode"
+                class="block text-sm font-medium text-gray-700"
+                >Verification Code</label
+              >
+              <div class="mt-1">
+                <input
+                  id="passcode"
+                  name="passcode"
+                  type="text"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  autocomplete="one-time-code"
+                  required
+                  class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                />
+              </div>
+            </div>
+            <div class="mt-6">
+              <button
+                type="submit"
+                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Verify
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- View 5: Success -->
+        <div id="view-success" class="hidden text-center">
+          <h2 class="text-2xl font-bold text-green-600 mb-4">
+            Verification Successful!
+          </h2>
+          <p class="text-gray-700 text-lg">Your username is:</p>
+          <p
+            id="username-display"
+            class="text-2xl font-mono font-bold text-indigo-700 mt-2"
+          ></p>
+          <button
+            id="btn-restart"
+            class="mt-8 w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Start Over
+          </button>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div
+          id="loading-indicator"
+          class="hidden items-center justify-center p-4"
+        >
+          <div class="spinner"></div>
+          <span class="ml-3 text-gray-600">Loading...</span>
+        </div>
+
+        <!-- Error Message Display -->
+        <div
+          id="error-message"
+          class="hidden mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md"
+        >
+          <!-- Errors will be injected here -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // --- State ---
+      let selectedFactorId = null;
+
+      // --- DOM Elements ---
+      const views = {
+        initial: document.getElementById("view-initial"),
+        email: document.getElementById("view-email"),
+        factors: document.getElementById("view-factors"),
+        challenge: document.getElementById("view-challenge"),
+        success: document.getElementById("view-success"),
+      };
+      const appContainer = document.getElementById("app-container");
+      const loadingIndicator = document.getElementById("loading-indicator");
+      const errorMessage = document.getElementById("error-message");
+
+      const btnStart = document.getElementById("btn-start");
+      const btnRestart = document.getElementById("btn-restart");
+
+      const formEmail = document.getElementById("form-email");
+      const formFactors = document.getElementById("form-factors");
+      const formChallenge = document.getElementById("form-challenge");
+
+      const factorList = document.getElementById("factor-list");
+      const challengePrompt = document.getElementById("challenge-prompt");
+      const usernameDisplay = document.getElementById("username-display");
+      const emailInput = document.getElementById("email");
+      const passcodeInpit = document.getElementById("passcode");
+
+      // --- Utility Functions ---
+
+      /**
+       * Switches the visible view.
+       * @param {string} viewName - The key of the view to show (e.g., 'email', 'factors').
+       */
+      function showView(viewName) {
+        // Hide all views
+        for (const key in views) {
+          views[key].classList.add("hidden");
+        }
+        // Show the target view
+        if (views[viewName]) {
+          views[viewName].classList.remove("hidden");
+        }
+        hideError();
+        hideLoading();
+      }
+
+      function showLoading() {
+        // Hide all views while loading
+        for (const key in views) {
+          views[key].classList.add("hidden");
+        }
+        loadingIndicator.classList.remove("hidden");
+        loadingIndicator.classList.add("flex");
+        hideError();
+      }
+
+      function hideLoading() {
+        loadingIndicator.classList.add("hidden");
+        loadingIndicator.classList.remove("flex");
+      }
+
+      function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.classList.remove("hidden");
+      }
+
+      function hideError() {
+        errorMessage.classList.add("hidden");
+      }
+
+      /**
+       * Gets the value of a cookie by name.
+       * @param {string} name - The name of the cookie.
+       */
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+      }
+
+      /**
+       * Fetches the CSRF token from the JS-readable cookie.
+       */
+      function getCsrfToken() {
+        return getCookie("XSRF-TOKEN-JS");
+      }
+
+      /**
+       * Initializes the app by fetching CSRF tokens from the backend.
+       */
+      async function initApp() {
+        try {
+          const response = await fetch("/api/init", {
+            method: "GET",
+          });
+          if (!response.ok) {
+            throw new Error(
+              "Failed to initialize security token. Please refresh the page."
+            );
+          }
+          // Now we have the CSRF tokens set, we can show the app
+          showView("initial");
+        } catch (error) {
+          showError(error.message);
+        }
+      }
+
+      /**
+       * A wrapper for fetch that includes credentials and CSRF token.
+       * @param {string} url - The API endpoint.
+       * @param {object} options - Fetch options (method, body, etc.).
+       */
+      async function apiFetch(url, options = {}) {
+        const csrfToken = getCsrfToken();
+        if (!csrfToken) {
+          throw new Error("Security token missing. Please refresh the page.");
+        }
+
+        const defaultHeaders = {
+          "Content-Type": "application/json",
+          "X-CSRF-TOKEN": csrfToken,
+        };
+
+        const config = {
+          ...options,
+          headers: {
+            ...defaultHeaders,
+            ...options.headers,
+          },
+          credentials: "include", // Send cookies
+        };
+
+        const response = await fetch(url, config);
+
+        if (!response.ok) {
+          let errorMsg = "An unknown error occurred.";
+          try {
+            const errData = await response.json();
+            errorMsg = errData.error || `Error ${response.status}`;
+          } catch (e) {
+            errorMsg = `Error ${response.status}: ${response.statusText}`;
+          }
+          throw new Error(errorMsg);
+        }
+
+        // Handle no-content responses (like for challenge)
+        if (
+          response.status === 204 ||
+          response.headers.get("content-length") === "0"
+        ) {
+          return null;
+        }
+
+        return response.json();
+      }
+
+      // --- Event Handlers ---
+
+      btnStart.addEventListener("click", () => {
+        showView("email");
+      });
+
+      btnRestart.addEventListener("click", () => {
+        // Re-initialize CSRF tokens for a new flow
+        initApp();
+      });
+
+      /**
+       * Handle Email Submission (Step 1 & 2)
+       */
+      formEmail.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        showLoading();
+        const email = emailInput.value;
+
+        try {
+          const factors = await apiFetch("/api/get-user-and-factors", {
+            method: "POST",
+            body: JSON.stringify({ email: email }),
+          });
+
+          // Populate factor list
+          factorList.innerHTML = ""; // Clear old factors
+          factors.forEach((factor, index) => {
+            const factorId = `factor-${factor.factorId}`;
+            const label =
+              factor.factorType === "token:software:totp"
+                ? `${factor.provider} Authenticator (TOTP)`
+                : `Phone (${factor.factorType})`;
+
+            const checked = index === 0 ? "checked" : "";
+            if (index === 0) {
+              selectedFactorId = factor.factorId; // Pre-select first
+            }
+
+            factorList.innerHTML += `
+                        <label for="${factorId}" class="flex items-center p-3 border rounded-md has-[:checked]:bg-indigo-50 has-[:checked]:border-indigo-400 cursor-pointer">
+                            <input id="${factorId}" name="factor" type="radio" value="${factor.factorId}" ${checked}
+                                class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                            <span class="ml-3 block text-sm font-medium text-gray-700">${label}</span>
+                        </label>
+                    `;
+          });
+
+          // Add change listener to update selectedFactorId
+          formFactors
+            .querySelectorAll('input[name="factor"]')
+            .forEach((radio) => {
+              radio.addEventListener("change", (event) => {
+                selectedFactorId = event.target.value;
+              });
+            });
+
+          showView("factors");
+        } catch (error) {
+          showError(error.message);
+          showView("email"); // Go back to email view on error
+        }
+      });
+
+      /**
+       * Handle Factor Selection (Step 3)
+       */
+      formFactors.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!selectedFactorId) {
+          showError("Please select a verification method.");
+          return;
+        }
+        showLoading();
+
+        try {
+          await apiFetch("/api/challenge-factor", {
+            method: "POST",
+            body: JSON.stringify({ factorId: selectedFactorId }),
+          });
+
+          // Update prompt for TOTP
+          const selectedFactorRadio = document.querySelector(
+            `input[value="${selectedFactorId}"]`
+          );
+          const label = selectedFactorRadio.nextElementSibling.textContent;
+          if (label.includes("TOTP")) {
+            challengePrompt.textContent =
+              "Enter the code from your authenticator app.";
+          } else {
+            challengePrompt.textContent =
+              "A code was sent to your device. Please enter it below.";
+          }
+
+          passcodeInpit.value = "";
+          showView("challenge");
+        } catch (error) {
+          showError(error.message);
+          showView("factors");
+        }
+      });
+
+      /**
+       * Handle Challenge Verification (Step 4 & 5)
+       */
+      formChallenge.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        showLoading();
+        const passCode = passcodeInpit.value;
+
+        try {
+          const result = await apiFetch("/api/verify-factor", {
+            method: "POST",
+            body: JSON.stringify({
+              factorId: selectedFactorId,
+              passCode: passCode,
+            }),
+          });
+
+          // Success!
+          usernameDisplay.textContent = result.username;
+          showView("success");
+
+          // Clear state
+          selectedFactorId = null;
+          emailInput.value = "";
+          passcodeInpit.value = "";
+        } catch (error) {
+          showError(error.message);
+          showView("challenge");
+        }
+      });
+
+      // --- App Initialization ---
+      // On page load, show loading and fetch CSRF tokens
+      showLoading();
+      initApp();
+    </script>
+  </body>
+</html>

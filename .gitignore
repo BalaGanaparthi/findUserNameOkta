@@ -1,0 +1,13 @@
+*
+!netlify/
+!netlify/functions/
+!netlify/functions/api/
+!netlify/functions/api/main.go
+!netlify.toml
+!index.html
+!go.mod
+!go.sum
+!.gitignore
+!DeployToNetlify.md
+!Dockerfile
+!docker-compose.yml

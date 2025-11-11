@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  app:
+    # Build the image from the Dockerfile in the current directory
+    build: .
+
+    # Map port 8080 on the host to port 8080 in the container
+    ports:
+      - "8080:8080"
+
+    # Load environment variables from the .env file
+    env_file:
+      - .env
+
+    # Set a container name for easier management
+    container_name: okta-recovery-app

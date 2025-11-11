@@ -1,0 +1,16 @@
+[build]
+  # This tells Netlify to build functions from this directory
+  functions = "netlify/functions"
+  # This tells Netlify your static files (index.html) are in the root
+  publish = "."
+
+[build.environment]
+  # Tell Netlify which version of Go to use for building functions
+  GO_VERSION = "1.21"
+
+[[redirects]]
+  # This is the "magic" part.
+  # It routes all /api/* requests to your single Go serverless function.
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
