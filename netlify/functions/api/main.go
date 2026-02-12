@@ -230,7 +230,8 @@ func getUserFactors(userId string) ([]FactorResponse, error) {
 	var responseFactors []FactorResponse
 	for _, f := range factors {
 		if f.Status == "ACTIVE" {
-			if f.FactorType == "sms" || f.FactorType == "call" || f.FactorType == "token:software:totp" {
+			log.Printf("User enrolled factors : %s", f.FactorType)
+			if f.FactorType == "email" || f.FactorType == "sms" || f.FactorType == "call" || f.FactorType == "token:software:totp" {
 				responseFactors = append(responseFactors, FactorResponse{
 					FactorID:   f.ID,
 					FactorType: f.FactorType,

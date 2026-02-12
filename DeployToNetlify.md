@@ -102,3 +102,7 @@ git commit -m "first commit"
 git branch -M main
 git remote add origin git@github.com:BalaGanaparthi/findUserNameOkta.git
 git push -u origin main
+
+COOKIE_HASH_KEY: openssl rand -hex 64
+
+COOKIE_BLOCK_KEY : openssl rand -hex 32
